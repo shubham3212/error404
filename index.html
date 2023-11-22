@@ -3,434 +3,349 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Copy Code to Clipboard</title>
+    <title>.</title>
     <style>
       body {
         font-family: "Courier New", monospace;
         margin: 20px;
       }
-      
-      .code-container {
+
+      /* .code-container {
         margin-bottom: 20px;
         border: 1px solid #ccc;
         padding: 10px;
-        background-color: #f7f7f7;
-      }
-      
+        background-color: #ffffff;
+      } */
+
       button {
         cursor: pointer;
       }
-      code{
-        width: 0;height: 0;
-        margin: 0;padding: 0;
-        font-size: 0;display: inline;
-      }
-      pre{
+      code {
+        width: 0;
         height: 0;
+        margin: 0;
+        padding: 0;
+        font-size: 0;
+        display: inline;
+      }
+      pre {
+        height: 0;
+      }
+
+      .big{
+        display: flex;
+      }
+
+      button{
+        background-color: #fff;
+        border-color: white;
       }
     </style>
   </head>
   <body>
+
+    <div class="big">
     <div class="code-container">
-      <!-- 1. No of words, spaces and lines -->
+      <!-- 1. Get record from mysql -->
       <pre id="codeBlock1">
         <code>
-          %{
-            #include <stdio.h>
-            int num_spaces = 0;
-            int num_lines = 0;
-            int num_words = 0;
-            %}
-            %%
-            [ \t] { num_spaces++; }   // Count blank spaces and tabs
-            \n     { num_lines++; }    // Count newlines to track lines
-            [a-zA-Z]+ { num_words++; } // Count words (assuming words are made up of letters)
-            .      ;                   // Ignore other characters
-            %%
-            int main() {
-                FILE *file = fopen("character.txt", "r"); // Open the file in read mode
-                if (file == NULL) {
-                    perror("Error opening file");
-                    return 1;
-                }
-                yyin = file; // Set the input file for Lex
-                yylex();
-                fclose(file); // Close the file after reading
-                printf("Number of blank spaces: %d\n", num_spaces);
-                printf("Number of lines: %d\n", num_lines);
-                printf("Number of words: %d\n", num_words);
-                return 0;
-            }
-        </code>
-    </pre>
-      <button onclick="copyToClipboard('codeBlock1')">No of line,sp,words</button>
-    </div>
-
-
-<!-- Total vovels  -->
-    <div class="code-container">
-      <pre id="codeBlock2">
-        <code>
-            %{
-#include <stdio.h>
-int num_vowels = 0;
-int num_consonants = 0;
-%}
-
-%%
-[AaEeIiOoUu] { num_vowels++; }       // Count vowels
-[a-zA-Z]     { num_consonants++; }   // Count consonants
-.            ;                       // Ignore other characters
-
-%%
-
-intyywrap(void){}
-int main() {
-    yyin=fopen("vovels.txt","r");
-    yylex();
-
-    printf("Number of vowels: %d\n", num_vowels);
-    printf("Number of consonants: %d\n", num_consonants);
-    return 0;
-}
-
-        </code>
-    </pre>
-      <button onclick="copyToClipboard('codeBlock2')">Tot vovel and cons</button>
-    </div>
-
-
-<!-- Insert in symbol table -->
-    <div class="code-container">
-      <pre id="codeBlock3">
-        <code>
-          
-          #include stdio.h>
-            #include ctype.h>
-            #include stdlib.h>
-            #include string.h>
-            #include math.h>
+            import java.sql.Connection;
+            import java.sql.DriverManager;
+            import java.sql.ResultSet;
+            import java.sql.SQLException;
+            import java.sql.Statement;
             
-            void main(){
-                int i=0,j=0,x=0,n;
-                void *p,*add[5];
-                char ch,srch,b[15],d[15],c;
-                printf("Expression terminated by $: ");
-                while((c=getchar())!='$'){
-                    b[i]=c;
-                    i++;
-                }
+            public class CreateDatabaseTable {
+                public static void main(String[] args) {
+                    Connection connection = null;
+                    try {
+                        // Open a connection
+                        Class.forName("com.mysql.cj.jdbc.Driver");
+                        connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/mybookstore", "root", "root");
             
-                n=i-1;
-                printf("Given Expression");
-                i=0;
-                while(i<=n){
-                    printf("%c",b[i]);
-                    i++;
-                }
-                printf("\nSymbol Table\n");
-                printf("\nSymbol \t addr \t type");
-                while(j<=n){
-                    c=b[j];
-                }
-                if(ispha(toascii(c))){
-                    p=malloc(c);
-                    add[x]=p;
-                    d[x]=c;
-                    printf("\n%c \t %d \t identifier \n",c,p);
-                    x++;j++;}
+                        // Create a statement
+                        Statement stmt = connection.createStatement();
             
-                else{
-                    ch=c;
-                    if(ch == '+'||ch=='-'||ch=='*'||ch=='='){
-                        p=malloc(ch);
-                        d[x]=ch;
-                        printf("\n%c\t%d\t operator\n",cp,p);
-                        x++;j++;
-                    
+                        // Select data from the 'books' table
+                        String strSelect = "SELECT title, price, qty FROM books";
+                        System.out.print("The SQL statement is " + strSelect + "\n");
+            
+                        ResultSet rset = stmt.executeQuery(strSelect);
+                        System.out.print("The records selected are: ");
+            
+                        int rowCount = 0;
+                        while (rset.next()) {
+                            String title = rset.getString("title");
+                            double price = rset.getDouble("price");
+                            int qty = rset.getInt("qty");
+                            System.out.println(title + " " + price + ", " + qty);
+                            rowCount++;
+                        }
+            
+                        System.out.println("Total number of records - " + rowCount);
+            
+                    } catch (ClassNotFoundException | SQLException e) {
+                        e.printStackTrace();
+                    } finally {
+                        try {
+                            // Close resources
+                            if (connection != null) {
+                                connection.close();
+                            }
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
-            
             }
             
 
+
+            
         </code>
     </pre>
-      <button onclick="copyToClipboard('codeBlock3')">Symbol Table</button>
+      <button onclick="copyToClipboard('codeBlock1')">
+        Get record from mysql
+      </button>
     </div>
 
+    <!-- make database mybookstore  -->
+    <div class="code-container">
+      <pre id="codeBlock2">
+        <code>-- Create the database
+            CREATE DATABASE IF NOT EXISTS mybookstore;
+            
+            -- Use the database
+            USE mybookstore;
+            
+            -- Create the 'books' table
+            CREATE TABLE IF NOT EXISTS books (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                title VARCHAR(255) NOT NULL,
+                author VARCHAR(255) NOT NULL,
+                price DECIMAL(10, 2) NOT NULL,
+                qty INT NOT NULL
+            );
+            
+            -- Insert data into the 'books' table
+            INSERT INTO books (title, author, price, qty) VALUES
+                ('Book1', 'Author1', 19.99, 100),
+                ('Book2', 'Author2', 29.99, 75),
+                ('Book3', 'Author3', 24.99, 120);
+                </code>
+    </pre>
+      <button onclick="copyToClipboard('codeBlock2')">
+        make database mybookstore
+      </button>
+    </div>
 
-
-<!-- YYAC to eval + - * / -->
+    <!-- Network Prog, .net, client server prog -->
     <div class="code-container">
       <pre id="codeBlock3">
         <code>
           
-          %{
-            #include stdio.h>
-            #include stdlib.h>
+            package socketprogram;
+
+            import java.io.DataInputStream;
+            import java.io.DataOutputStream;
+            import java.io.IOException;
+            import java.io.InputStream;
+            import java.io.OutputStream;
+            import java.net.Socket;
             
-            int yylex(void);
-            void yyerror(const char *s);
-            int res = 0;
-            %}
+            public class GreetingClient {
+                public static void main(String[] args) {
+                    String serverName = args[0];
+                    int port = Integer.parseInt(args[1]);
             
-            %token NUM
-            %left '+' '-'
-            %left '*' '/'
+                    try {
+                        System.out.println("Connecting to " + serverName + " on port " + port);
+                        Socket client = new Socket(serverName, port);
+                        System.out.println("Just connected to " + client.getRemoteSocketAddress());
             
-            %%
+                        OutputStream outToServer = client.getOutputStream();
+                        DataOutputStream out = new DataOutputStream(outToServer);
+                        out.writeUTF("Hello from " + client.getLocalSocketAddress());
             
-            Stmt: expr { res = $1; }
+                        InputStream inFromServer = client.getInputStream();
+                        DataInputStream in = new DataInputStream(inFromServer);
+                        System.out.println("Server says: " + in.readUTF());
             
-            expr    : expr '+' expr     { $$ = $1 + $3; }
-                    | expr '-' expr     { $$ = $1 - $3; }
-                    | expr '*' expr     { $$ = $1 * $3; }
-                    | expr '/' expr     { 
-                                            if ($3 == 0) {
-                                                fprintf(stderr, "Error: Division by zero\n");
-                                                exit(EXIT_FAILURE);
-                                            } else {
-                                                $$ = $1 / $3;
-                                            }
-                                        }
-                    | term              { $$ = $1; }
-                    ;
-            
-            term    : NUM               { $$ = $1; }
-                    ;
-            
-            %%
-            
-            int main() {
-                printf("Enter Expression: ");
-                yyparse();
-                printf("Result = %d\n", res);
-                exit(EXIT_SUCCESS);
+                        client.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             }
             
-            void yyerror(const char *s) {
-                printf("Error: %s\n", s);
-                exit(EXIT_FAILURE);
+
+
+
+            //Server Side--------------------------------------------------------------------------------------------
+
+
+
+
+            package socketprogram;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketTimeoutException;
+
+public class GreetingServer extends Thread {
+    private ServerSocket serverSocket;
+
+    public GreetingServer(int port) throws IOException {
+        serverSocket = new ServerSocket(port);
+        serverSocket.setSoTimeout(1000000);
+    }
+
+    public void run() {
+        while (true) {
+            try {
+                System.out.println("Waiting for client on port " + serverSocket.getLocalPort() + "...");
+                Socket server = serverSocket.accept();
+                System.out.println("Just connected to " + server.getRemoteSocketAddress());
+
+                DataInputStream in = new DataInputStream(server.getInputStream());
+                DataOutputStream out = new DataOutputStream(server.getOutputStream());
+                out.writeUTF("Thanks for connecting to " + server.getLocalSocketAddress() + "\nGoodbye!");
+                server.close();
+            } catch (SocketTimeoutException e) {
+                System.out.println("Socket timed out");
+                break;
+            } catch (IOException e) {
+                e.printStackTrace();
+                break;
             }
+        }
+    }
+
+    public static void main(String[] args) {
+        int port = Integer.parseInt(args[0]);
+        try {
+            new GreetingServer(port).start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+        </code>
+    </pre>
+      <button onclick="copyToClipboard('codeBlock3')">
+        Network Prog, .net, client server prog
+      </button>
+    </div>
+
+    <!-- Addition Server -->
+    <div class="code-container">
+      <pre id="codeBlock3">
+        <code>
+            //Addition Interface
+            import java.rmi.Remote;
+            import java.rmi.RemoteException;
             
+            public interface AdditionInterface extends Remote {
+                int add(int a, int b) throws RemoteException;
+            }
+
+
+            //Addition Implementation
+            import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+
+public class Addition extends UnicastRemoteObject implements AdditionInterface {
+    public Addition() throws RemoteException {
+        super();
+    }
+
+    public int add(int a, int b) throws RemoteException {
+        return a + b;
+    }}
+
+            //Addition Server
+            import java.rmi.Naming;
+import java.rmi.registry.LocateRegistry;
+
+public class AdditionServer {
+    public static void main(String[] args) {
+        try {
+            LocateRegistry.createRegistry(1099); // Create the RMI registry on port 1099
+            Addition hello = new Addition();
+            Naming.rebind("rmi://localhost/ABC", hello);
+            System.out.println("Addition server is ready");
+        } catch (Exception e) {
+            System.out.println("Addition server failed: " + e);
+        }
+    }
+}
+
+            //Addition Client
+import java.rmi.Naming;
+
+public class AdditionClient {
+    public static void main(String[] args) {
+        AdditionInterface hello;
+        try {
+            hello = (AdditionInterface) Naming.lookup("rmi://localhost/ABC");
+            int result = hello.add(9, 10);
+            System.out.println("Result is " + result);
+        } catch (Exception e) {
+            System.out.println("Hello client exception: " + e);
+        }
+    }
+}
+
+
+              
             
 
         </code>
     </pre>
-      <button onclick="copyToClipboard('codeBlock3')">YYAC to eval + - * </button>
+      <button onclick="copyToClipboard('codeBlock3')">Addition Server</button>
     </div>
 
-
-
-<!-- YYAC to eval + - * / -->
+    <!-- Serverlet -->
     <div class="code-container">
       <pre id="codeBlock4">
         <code>
-          
-          %{
-            #include stdio.h>
-            #include stdlib.h>
+            import java.io.IOException;
+            import java.io.PrintWriter;
             
-            int yylex(void);
-            void yyerror(const char *s);
-            int res = 0;
-            %}
+            import javax.servlet.ServletException;
+            import javax.servlet.annotation.WebServlet;
+            import javax.servlet.http.HttpServlet;
+            import javax.servlet.http.HttpServletRequest;
+            import javax.servlet.http.HttpServletResponse;
             
-            %token NUM
-            %left '+' '-'
-            %left '*' '/'
+            @WebServlet("/myservlet")
+            public class MyServlet extends HttpServlet {
+                private static final long serialVersionUID = 1L;
             
-            %%
+                public MyServlet() {
+                    super();
+                }
             
-            Stmt: expr { res = $1; }
-            
-            expr    : expr '+' expr     { $$ = $1 + $3; }
-                    | expr '-' expr     { $$ = $1 - $3; }
-                    | expr '*' expr     { $$ = $1 * $3; }
-                    | expr '/' expr     { 
-                                            if ($3 == 0) {
-                                                fprintf(stderr, "Error: Division by zero\n");
-                                                exit(EXIT_FAILURE);
-                                            } else {
-                                                $$ = $1 / $3;
-                                            }
-                                        }
-                    | term              { $$ = $1; }
-                    ;
-            
-            term    : NUM               { $$ = $1; }
-                    ;
-            
-            %%
-            
-            int main() {
-                printf("Enter Expression: ");
-                yyparse();
-                printf("Result = %d\n", res);
-                exit(EXIT_SUCCESS);
-            }
-            
-            void yyerror(const char *s) {
-                printf("Error: %s\n", s);
-                exit(EXIT_FAILURE);
-            }
-            
-          //Lex
-
-          %{
-            #include stdio.h>
-            #include stdlib.h>
-            #include"y.tab.h"
-        
-            extern int yylval;
-            %}
-        
-        %%
-        [0-9]+{yylval = atoi/yytext
-                return number;};
-        [\t]{;}
-        [\n]{return 0;}
-        .{return yytext[0];}
-        %%
-        int yywrap(){
-            return 1;
-        }
-
-        </code>
-    </pre>
-      <button onclick="copyToClipboard('codeBlock4')">YYAC to eval + - *</button>
-    </div>
-
-
-<!-- Check AnBn -->
-    <div class="code-container">
-      <pre id="codeBlock6">
-        <code>
-
-          %{
-            #include stdio.h>
-            #include stdlib.h>
-            int yylex(void);
-            int yyerror();
-            %}
-            
-            %token AB
-            %%
-            Stmt :s
-            ;
-            S:ASB
-            |
-            ;
-            %%
-            int main() {
-            
-                printf("Enter a string: ");
-                yyparse();
-                printf("Valid\n");
-                exit(0);}
-            
-            void yyerror(){
-                printf("Invalid\n");
-                exit(0);
-            }
-            
-            
-            //Lex
-            %{
-                #include stdio.h>
-                #include stdlib.h>
-                #include"y.tab.h"
-            %}
-            
-            %%
-            
-            "a"|"A"   {return A;}
-            "b"|"B"   {return B;}
-            
-            [\t]{;}
-            [\n]{return 0;}
-            .   {return yytext[0];}
-            %%
-            
-            int yywrap(){
-                return 1;
-            }
-        </code></pre>
-      <button onclick="copyToClipboard('codeBlock6')">Check AnBn</button>
-    </div>
-
-
-<!-- AnBnCnDn -->
-    <div class="code-container">
-      <pre id="codeBlock7">
-        <code>
-
-          %{
-            #include stdio.h>
-            #include stdlib.h>
-            int yylex(void);
-            void yyerror();
-            %}
-            
-            %token A B C D 
-            %%
-            Stmt : s ;
-            s    : AB CD { printf("Valid\n"); exit(0); }
-                  | s AB CD
-                  ;
-            AB   : 'a' | 'A' 'b' | 'B';
-            CD   : 'c' | 'C' 'd' | 'D';
-            %%
-            int main() {
-                printf("Enter a string: ");
-                yyparse();
-                printf("valid\n");
-                exit(0);
-            }
-            
-            void yyerror(const char *s){
-                printf("Invalid\n");
-                exit(0);
-            }
-            
-            //Lex
-            
-            
-            %{
-                #include stdio.h>
-                #include stdlib.h>
-                #include"y.tab.h"
-            %}
-            %%
-            
-            "a"|"A"   {return A;}
-            "b"|"B"   {return B;}
-            "c"|"C"   {return C;}
-            "d"|"D"   {return D;}
-                
-            [\t]{;}            
-            [\n]{return 0;}
-                {reutn yytext[0];}
-            %%
-            int yywrap(){
-                return 1;
+                protected void doGet(HttpServletRequest request, HttpServletResponse response)
+                        throws ServletException, IOException {
+                    response.setContentType("text/html");
+                    PrintWriter out = response.getWriter();
+                    out.print(" html> body>");
+                    out.print(" h1>Hello World /h1>");
+                    out.print(" /body> /html>");
+                }
             }
             
 
         </code>
     </pre>
-      <button onclick="copyToClipboard('codeBlock7')">AnBnCnDn</button>
-    </div>
-
-
-
-
-
-
-
-
-
+      <button onclick="copyToClipboard('codeBlock4')">Serverlet</button>
+    </div></div>
     <!-- Add more code blocks and buttons as needed -->
 
     <script>
@@ -456,7 +371,7 @@ int main() {
         document.body.removeChild(tempTextArea);
 
         // Provide some visual feedback (optional)
-        alert("Code copied to clipboard:\n" + codeToCopy);
+        // alert("👍");
       }
     </script>
   </body>
